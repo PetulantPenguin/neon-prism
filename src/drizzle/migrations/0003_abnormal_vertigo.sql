@@ -1,0 +1,1 @@
+ALTER TABLE "questions" ADD COLUMN "group_number" integer DEFAULT 1 NOT NULL;

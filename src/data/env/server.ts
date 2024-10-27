@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs"
-import { z } from "zod"
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
   emptyStringAsUndefined: true,
@@ -15,4 +15,4 @@ export const env = createEnv({
     TEST_COUNTRY_CODE: z.string(),
   },
   experimental__runtimeEnv: process.env,
-})
+});

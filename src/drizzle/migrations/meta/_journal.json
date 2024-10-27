@@ -8,6 +8,41 @@
       "when": 1726499858809,
       "tag": "0000_left_agent_zero",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1729994125366,
+      "tag": "0001_groovy_luckman",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729994223893,
+      "tag": "0002_damp_puck",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1729995625659,
+      "tag": "0003_abnormal_vertigo",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1729996334036,
+      "tag": "0004_dark_violations",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1729996479808,
+      "tag": "0005_clean_white_queen",
+      "breakpoints": true
     }
   ]
 }
