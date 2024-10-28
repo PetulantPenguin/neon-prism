@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,37 +6,43 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   subscriptionTiers,
   subscriptionTiersInOrder,
   TierNames,
-} from "@/data/subscriptionTiers"
-import { formatCompactNumber } from "@/lib/formatters"
-import { cn } from "@/lib/utils"
+} from "@/data/subscriptionTiers";
+import { formatCompactNumber } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 import {
   createCancelSession,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   createCheckoutSession,
   createCustomerPortalSession,
-} from "@/server/actions/stripe"
-import { getProductCount } from "@/server/db/products"
-import { getProductViewCount } from "@/server/db/productViews"
-import { getUserSubscriptionTier } from "@/server/db/subscription"
-import { auth } from "@clerk/nextjs/server"
-import { startOfMonth } from "date-fns"
-import { CheckIcon } from "lucide-react"
-import { ReactNode } from "react"
+} from "@/server/actions/stripe";
+import { getProductCount } from "@/server/db/products";
+import { getProductViewCount } from "@/server/db/productViews";
+import { getUserSubscriptionTier } from "@/server/db/subscription";
+import { auth } from "@clerk/nextjs/server";
+import { startOfMonth } from "date-fns";
+import { CheckIcon } from "lucide-react";
+import { ReactNode } from "react";
 
 export default async function SubscriptionPage() {
-  const { userId, redirectToSignIn } = auth()
-  if (userId == null) return redirectToSignIn()
-  const tier = await getUserSubscriptionTier(userId)
-  const productCount = await getProductCount(userId)
+  const { userId, redirectToSignIn } = auth();
+  if (userId == null) return redirectToSignIn();
+  const tier = await getUserSubscriptionTier(userId);
+  const productCount = await getProductCount(userId);
   const pricingViewCount = await getProductViewCount(
     userId,
     startOfMonth(new Date())
-  )
+  );
+
+  function subscribe() {
+    createCustomerPortalSession();
+  }
+
   return (
     <>
       <h1 className="mb-6 text-3xl font-semibold">Your Subscription</h1>
@@ -81,7 +87,8 @@ export default async function SubscriptionPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form action={createCustomerPortalSession}>
+              {/* // eslint-disable-next-line */}
+              <form action={subscribe}>
                 <Button
                   variant="accent"
                   className="text-lg rounded-lg"
@@ -95,12 +102,12 @@ export default async function SubscriptionPage() {
         )}
       </div>
       <div className="grid-cols-2 lg:grid-cols-4 grid gap-4 max-w-screen-xl mx-auto">
-        {subscriptionTiersInOrder.map(t => (
+        {subscriptionTiersInOrder.map((t) => (
           <PricingCard key={t.name} currentTierName={tier.name} {...t} />
         ))}
       </div>
     </>
-  )
+  );
 }
 
 function PricingCard({
@@ -113,7 +120,7 @@ function PricingCard({
   canCustomizeBanner,
   currentTierName,
 }: (typeof subscriptionTiersInOrder)[number] & { currentTierName: TierNames }) {
-  const isCurrent = currentTierName === name
+  const isCurrent = currentTierName === name;
 
   return (
     <Card className="shadow-none rounded-3xl overflow-hidden">
@@ -154,20 +161,20 @@ function PricingCard({
         {canRemoveBranding && <Feature>Remove Easy PPP branding</Feature>}
       </CardFooter>
     </Card>
-  )
+  );
 }
 
 function Feature({
   children,
   className,
 }: {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <CheckIcon className="size-4 stroke-accent bg-accent/25 rounded-full p-0.5" />
       <span>{children}</span>
     </div>
-  )
+  );
 }

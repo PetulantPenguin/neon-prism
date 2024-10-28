@@ -1,28 +1,35 @@
-"use server"
+"use server";
 
-import { PaidTierNames, subscriptionTiers } from "@/data/subscriptionTiers"
-import { auth, currentUser, User } from "@clerk/nextjs/server"
-import { getUserSubscription } from "../db/subscription"
-import { Stripe } from "stripe"
-import { env as serverEnv } from "@/data/env/server"
-import { env as clientEnv } from "@/data/env/client"
-import { redirect } from "next/navigation"
+import { PaidTierNames, subscriptionTiers } from "@/data/subscriptionTiers";
+import { auth, currentUser, User } from "@clerk/nextjs/server";
+import { getUserSubscription } from "../db/subscription";
+import { Stripe } from "stripe";
+import { env as serverEnv } from "@/data/env/server";
+import { env as clientEnv } from "@/data/env/client";
+import { redirect } from "next/navigation";
 
-const stripe = new Stripe(serverEnv.STRIPE_SECRET_KEY)
+const stripe = new Stripe(serverEnv.STRIPE_SECRET_KEY);
 
 export async function createCancelSession() {
-  const user = await currentUser()
-  if (user == null) return { error: true }
+  const user = await currentUser();
+  if (user == null) {
+    console.error("no user");
+    return;
+  }
 
-  const subscription = await getUserSubscription(user.id)
+  const subscription = await getUserSubscription(user.id);
 
-  if (subscription == null) return { error: true }
+  if (subscription == null) {
+    console.error("no subscription");
+    return;
+  }
 
   if (
     subscription.stripeCustomerId == null ||
     subscription.stripeSubscriptionId == null
   ) {
-    return new Response(null, { status: 500 })
+    console.error("no stripeCustomerId or stripeSubscriptionId");
+    return;
   }
 
   const portalSession = await stripe.billingPortal.sessions.create({
@@ -34,45 +41,58 @@ export async function createCancelSession() {
         subscription: subscription.stripeSubscriptionId,
       },
     },
-  })
+  });
 
-  redirect(portalSession.url)
+  redirect(portalSession.url);
 }
 
 export async function createCustomerPortalSession() {
-  const { userId } = auth()
+  const { userId } = auth();
 
-  if (userId == null) return { error: true }
+  if (userId == null) {
+    console.error("no user");
+    return;
+  }
 
-  const subscription = await getUserSubscription(userId)
+  const subscription = await getUserSubscription(userId);
 
   if (subscription?.stripeCustomerId == null) {
-    return { error: true }
+    console.error("no subscription.stripeCustomerId");
+    return;
   }
 
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: subscription.stripeCustomerId,
     return_url: `${clientEnv.NEXT_PUBLIC_SERVER_URL}/dashboard/subscription`,
-  })
+  });
 
-  redirect(portalSession.url)
+  redirect(portalSession.url);
 }
 
 export async function createCheckoutSession(tier: PaidTierNames) {
-  const user = await currentUser()
-  if (user == null) return { error: true }
+  const user = await currentUser();
+  if (user == null) {
+    console.error("no user");
+    return;
+  }
 
-  const subscription = await getUserSubscription(user.id)
+  const subscription = await getUserSubscription(user.id);
 
-  if (subscription == null) return { error: true }
+  if (subscription == null) {
+    console.error("no subscription");
+    return;
+  }
 
   if (subscription.stripeCustomerId == null) {
-    const url = await getCheckoutSession(tier, user)
-    if (url == null) return { error: true }
-    redirect(url)
+    const url = await getCheckoutSession(tier, user);
+    if (url == null) {
+      console.error("no url");
+      return;
+    }
+    redirect(url);
   } else {
-    const url = await getSubscriptionUpgradeSession(tier, subscription)
-    redirect(url)
+    const url = await getSubscriptionUpgradeSession(tier, subscription);
+    redirect(url);
   }
 }
 
@@ -93,17 +113,17 @@ async function getCheckoutSession(tier: PaidTierNames, user: User) {
     mode: "subscription",
     success_url: `${clientEnv.NEXT_PUBLIC_SERVER_URL}/dashboard/subscription`,
     cancel_url: `${clientEnv.NEXT_PUBLIC_SERVER_URL}/dashboard/subscription`,
-  })
+  });
 
-  return session.url
+  return session.url;
 }
 
 async function getSubscriptionUpgradeSession(
   tier: PaidTierNames,
   subscription: {
-    stripeCustomerId: string | null
-    stripeSubscriptionId: string | null
-    stripeSubscriptionItemId: string | null
+    stripeCustomerId: string | null;
+    stripeSubscriptionId: string | null;
+    stripeSubscriptionItemId: string | null;
   }
 ) {
   if (
@@ -111,7 +131,7 @@ async function getSubscriptionUpgradeSession(
     subscription.stripeSubscriptionId == null ||
     subscription.stripeSubscriptionItemId == null
   ) {
-    throw new Error()
+    throw new Error();
   }
 
   const portalSession = await stripe.billingPortal.sessions.create({
@@ -130,7 +150,7 @@ async function getSubscriptionUpgradeSession(
         ],
       },
     },
-  })
+  });
 
-  return portalSession.url
+  return portalSession.url;
 }

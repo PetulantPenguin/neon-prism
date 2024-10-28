@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Banner } from "@/components/Banner"
-import { NoPermissionCard } from "@/components/NoPermissionCard"
-import { RequiredLabelIcon } from "@/components/RequiredLabelIcon"
-import { Button } from "@/components/ui/button"
+import { Banner } from "@/components/Banner";
+import { NoPermissionCard } from "@/components/NoPermissionCard";
+import { RequiredLabelIcon } from "@/components/RequiredLabelIcon";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,16 +12,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
-import { productCustomizationSchema } from "@/schemas/products"
-import { updateProductCustomization } from "@/server/actions/products"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { custom, z } from "zod"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { productCustomizationSchema } from "@/schemas/products";
+import { updateProductCustomization } from "@/server/actions/products";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 export function ProductCustomizationForm({
   customization,
@@ -29,43 +29,43 @@ export function ProductCustomizationForm({
   canRemoveBranding,
 }: {
   customization: {
-    productId: string
-    locationMessage: string
-    backgroundColor: string
-    textColor: string
-    fontSize: string
-    bannerContainer: string
-    isSticky: boolean
-    classPrefix: string | null
-  }
-  canRemoveBranding: boolean
-  canCustomizeBanner: boolean
+    productId: string;
+    locationMessage: string;
+    backgroundColor: string;
+    textColor: string;
+    fontSize: string;
+    bannerContainer: string;
+    isSticky: boolean;
+    classPrefix: string | null;
+  };
+  canRemoveBranding: boolean;
+  canCustomizeBanner: boolean;
 }) {
-  const { toast } = useToast()
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof productCustomizationSchema>>({
     resolver: zodResolver(productCustomizationSchema),
     defaultValues: {
       ...customization,
       classPrefix: customization.classPrefix ?? "",
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof productCustomizationSchema>) {
     const data = await updateProductCustomization(
       customization.productId,
       values
-    )
+    );
 
     if (data?.message) {
       toast({
         title: data.error ? "Error" : "Success",
         description: data.message,
         variant: data.error ? "destructive" : "default",
-      })
+      });
     }
   }
 
-  const formValues = form.watch()
+  const formValues = form.watch();
 
   return (
     <>
@@ -231,5 +231,5 @@ export function ProductCustomizationForm({
         </form>
       </Form>
     </>
-  )
+  );
 }
