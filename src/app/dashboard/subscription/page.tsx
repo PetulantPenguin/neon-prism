@@ -39,10 +39,6 @@ export default async function SubscriptionPage() {
     startOfMonth(new Date())
   );
 
-  function subscribe() {
-    createCustomerPortalSession();
-  }
-
   return (
     <>
       <h1 className="mb-6 text-3xl font-semibold">Your Subscription</h1>
@@ -88,7 +84,7 @@ export default async function SubscriptionPage() {
             </CardHeader>
             <CardContent>
               {/* // eslint-disable-next-line */}
-              <form action={subscribe}>
+              <form action={createCustomerPortalSession}>
                 <Button
                   variant="accent"
                   className="text-lg rounded-lg"
